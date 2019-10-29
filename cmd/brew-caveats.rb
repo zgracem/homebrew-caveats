@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
+require "caveats"
 require "formula"
 
-Formula.installed.sort.map(&:to_hash)
-       .select { |f| f["caveats"].present? }
-       .each { |f| ohai f["name"], f["caveats"] }
+Formula.installed.sort.select(&:caveats).each do |f|
+  caveats = Caveats.new(f)
+  ohai f.name, caveats.to_s unless caveats.empty?
+end
