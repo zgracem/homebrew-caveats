@@ -1,9 +1,15 @@
 #!/usr/bin/env ruby
 
 require "caveats"
-require "formula"
+require "dev-cmd/irb"
 
-Formula.installed.sort.select(&:caveats).each do |f|
+formulae = ARGV.map(&:f).presence || Formula.installed.select(&:caveats).sort
+
+formulae.each do |f|
   caveats = Caveats.new(f)
-  ohai f.name, caveats.to_s unless caveats.empty?
+  if caveats.present?
+    ohai f.name, caveats.to_s
+  else
+    opoo "No caveats for #{f.name}!"
+  end
 end
