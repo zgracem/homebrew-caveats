@@ -14,5 +14,5 @@ brew tap zgracem/caveats
 ## Usage
 
 ```sh
-brew caveats [formula] [formula ...]
+brew caveats [formula ...]
 ```
