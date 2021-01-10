@@ -1,5 +1,14 @@
 #!/usr/bin/env ruby
 
+#:  * `caveats` <[formula ...]>:
+#:    Prints installation caveats for Homebrew formulae.
+#:
+#:    `brew caveats`
+#:    List caveats for all installed formulae.
+#:
+#:    `brew caveats` <formula> <[...]>
+#:    List caveats for all listed formulae (whether installed or not).
+
 require "caveats"
 require "dev-cmd/irb"
 
