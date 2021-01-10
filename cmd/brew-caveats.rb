@@ -3,10 +3,9 @@
 require "caveats"
 require "dev-cmd/irb"
 
-formulae = ARGV.map(&:f).presence || Formula.installed.select(&:caveats).sort
-
-formulae.each do |f|
+(ARGV.map(&:f).presence || Formula.installed.select(&:caveats).sort).each do |f|
   caveats = Caveats.new(f)
+
   if caveats.present?
     ohai f.name, caveats.to_s
   else
