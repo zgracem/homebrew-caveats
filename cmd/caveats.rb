@@ -1,41 +1,44 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "abstract_command"
 require "caveats"
-require "cli/parser"
-require "dev-cmd/irb"
-require "formula"
 
 module Homebrew
-  module_function
+  module Cmd
+    class Caveats < AbstractCommand
+      cmd_args do
+        description <<~HELP
+          Display caveats for an installed <formula>, or for all installed
+          formulae if no argument is provided.
+        HELP
+        switch "--formula", "--formulae",
+               description: "Treat all named arguments as formulae."
+        switch "--cask", "--casks",
+               description: "Treat all named arguments as casks."
 
-  def caveats_args
-    Homebrew::CLI::Parser.new do
-      usage_banner <<~USAGE
-        `caveats` [<formula> ...]
+        conflicts "--formula", "--cask"
 
-        Show existing caveats for a formula. If no formulae are given, print
-        caveats for all installed formulae.
-      USAGE
-    end
-  end
+        named_args [:formula, :cask]
+      end
 
-  def caveats
-    args = caveats_args.parse
-    formulae = args.named.map(&:f).presence || all_caveats_installed
+      def run
+        formulae = args.named.to_formulae_and_casks.presence || all_caveats_installed
 
-    formulae.each do |f|
-      caveats = Caveats.new(f)
+        formulae.each do |f|
+          caveats = ::Caveats.new(f)
 
-      if caveats.present?
-        ohai f.name, caveats.to_s
-      else
-        opoo "No caveats for #{f.name}!"
+          if caveats.present?
+            ohai f.name, caveats.to_s
+          else
+            opoo "No caveats for #{f.name}!"
+          end
+        end
+      end
+
+      def all_caveats_installed
+        Formula.installed.select(&:caveats).sort
       end
     end
-  end
-
-  def all_caveats_installed
-    Formula.installed.select(&:caveats).sort
   end
 end
