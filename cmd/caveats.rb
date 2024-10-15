@@ -36,8 +36,24 @@ module Homebrew
         end
       end
 
+      private
+
       def all_caveats_installed
-        Formula.installed.select(&:caveats).sort
+        if args.formulae?
+          all_formulae_with_caveats
+        elsif args.casks?
+          all_casks_with_caveats
+        else
+          all_formulae_with_caveats + all_casks_with_caveats
+        end
+      end
+
+      def all_formulae_with_caveats
+        Formula.installed.select { |f| f.caveats.present? }
+      end
+
+      def all_casks_with_caveats
+        Cask::Caskroom.casks.select { |c| c.caveats.present? }
       end
     end
   end
