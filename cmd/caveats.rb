@@ -26,7 +26,7 @@ module Homebrew
         formulae = args.named.to_formulae_and_casks.presence || all_caveats_installed
 
         formulae.each do |f|
-          caveats = ::Caveats.new(f)
+          caveats = f.caveats
 
           if caveats.present?
             ohai f.name, caveats.to_s
