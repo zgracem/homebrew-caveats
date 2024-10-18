@@ -25,13 +25,14 @@ module Homebrew
       def run
         targets = args.named.to_formulae_and_casks.presence || all_caveats_installed
 
-        targets.each do |targets|
-          caveats = targets.caveats
+        targets.each do |target|
+          caveats = target.caveats
+          target_name = [target.name].flatten.first
 
           if caveats.present?
-            ohai targets.name, caveats.to_s
+            ohai target_name, caveats.to_s
           else
-            opoo "No caveats for #{targets.name}!"
+            opoo "No caveats for #{target_name}!"
           end
         end
       end
